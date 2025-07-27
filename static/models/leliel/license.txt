@@ -1,0 +1,11 @@
+Model Information:
+* title:	Leliel
+* source:	https://sketchfab.com/3d-models/leliel-f8cf4aca42684e0d85a0f5a33d186de8
+* author:	Nicolás Sazo (https://sketchfab.com/GhostRonin)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Leliel" (https://sketchfab.com/3d-models/leliel-f8cf4aca42684e0d85a0f5a33d186de8) by Nicolás Sazo (https://sketchfab.com/GhostRonin) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Evangelion Unit-02
+* source:	https://sketchfab.com/3d-models/evangelion-unit-02-d094f206ef514f499079b1ae9c08d8bf
+* author:	Mateusz Woliński (https://sketchfab.com/jeandiz)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Evangelion Unit-02" (https://sketchfab.com/3d-models/evangelion-unit-02-d094f206ef514f499079b1ae9c08d8bf) by Mateusz Woliński (https://sketchfab.com/jeandiz) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
