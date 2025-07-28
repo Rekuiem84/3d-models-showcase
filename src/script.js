@@ -10,65 +10,126 @@ import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons.js";
 const gui = new GUI();
 
 const debugObject = {};
-debugObject.foxAnimation = ["Idle", "Walk", "Run"];
-debugObject.selectedAnimation = "Walk";
 
 const basePath = "./models";
 
+// Les modèles ont plusieurs proprétés :
+// - path : le chemin vers le modèle
+// - scale : l'échelle du modèle
+// - verticalPosition : la position verticale du modèle (pour ne pas que le modèle soit dans le sol)
+// - cameraPosition : la position de la caméra
+
 debugObject.models = {
-	duck: {
+	Duck: {
 		path: "/duck/glTF/Duck.gltf",
 		scale: 1,
 		verticalPosition: -0.1,
+		cameraPosition: {
+			x: 2.4,
+			y: 2.3,
+			z: 2.25,
+		},
 	},
-	fox: {
+	Fox: {
 		path: "/fox/glTF/Fox.gltf",
-		animations: ["Idle", "Walk", "Run"],
 		scale: 0.025,
+		cameraPosition: {
+			x: 2.4,
+			y: 1.75,
+			z: 2.55,
+		},
 	},
-	flightHelmet: {
+	"Flight Helmet": {
 		path: "/flightHelmet/glTF/FlightHelmet.gltf",
-		scale: 4,
+		scale: 3,
+		cameraPosition: {
+			x: 1.3,
+			y: 2.15,
+			z: 2.15,
+		},
 	},
-	wuhu: {
-		path: "/wuhuIsland/scene.gltf",
-		scale: 0.0001,
-		verticalPosition: 0.01,
-	},
-	upcycleComputer: {
+	"Upcycled Computer": {
 		path: "/upcycleComputer/scene.gltf",
 		scale: 1,
-		animations: ["Play Guitar"],
 		verticalPosition: 0.06,
+		cameraPosition: { x: 1, y: 2, z: 2.55 },
 	},
-	eva01: {
+	"Dinosaur Skull": {
+		path: "/dinoSkull/scene.gltf",
+		scale: 0.15,
+		verticalPosition: 1,
+		cameraPosition: {
+			x: 1.8,
+			y: 2.15,
+			z: 2.25,
+		},
+	},
+	"Dinosaur Skeleton": {
+		path: "/dinoSkeleton/scene.gltf",
+		scale: 0.012,
+		verticalPosition: -0.25,
+		cameraPosition: {
+			x: 1.85,
+			y: 1.8,
+			z: 2.7,
+		},
+	},
+	"Eva 01": {
 		path: "/eva01/scene.gltf",
 		scale: 0.2,
 		verticalPosition: 0.1,
+		cameraPosition: {
+			x: 1.45,
+			y: 2.25,
+			z: 4.7,
+		},
 	},
-	eva02: {
+	"Eva 02": {
 		path: "/eva02/scene.gltf",
-		scale: 0.05,
+		scale: 0.12,
+		cameraPosition: {
+			x: -2.55,
+			y: 2.15,
+			z: 4.9,
+		},
 	},
-	dinoSkull: {
-		path: "/dinoSkull/scene.gltf",
-		scale: 0.15,
-		verticalPosition: 1.5,
-	},
-	dinoSkeleton: {
-		path: "/dinoSkeleton/scene.gltf",
-		scale: 0.01,
-		verticalPosition: -0.25,
-	},
-	leliel: {
+	Leliel: {
 		path: "/leliel/scene.gltf",
 		scale: 0.5,
-		verticalPosition: 0.1,
+		verticalPosition: 0,
+		cameraPosition: {
+			x: 1.4,
+			y: 4.2,
+			z: 5.55,
+		},
+	},
+	"Wuhu Island": {
+		path: "/wuhuIsland/scene.gltf",
+		scale: 0.0001,
+		verticalPosition: 0.01,
+		cameraPosition: {
+			x: 2.2,
+			y: 3.15,
+			z: 4.5,
+		},
 	},
 };
 
-// Changement temporaire pour tester avec un modèle qui fonctionne
-debugObject.selectedModel = debugObject.models.fox;
+// Modèle par défaut
+debugObject.selectedModel = debugObject.models.Fox;
+
+gui
+	.add(debugObject, "selectedModel", debugObject.models)
+	.name("Models")
+	.onChange(() => {
+		// Retirer le modèle actuel de la scène
+		const currentModel = scene.getObjectByName("currentModel");
+		if (currentModel) {
+			scene.remove(currentModel);
+		}
+
+		loadModel(debugObject.selectedModel.path);
+	});
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -86,54 +147,67 @@ gltfLoader.setDRACOLoader(dracoLoader);
 
 let mixer = null;
 
-gltfLoader.load(
-	`${basePath}${debugObject.selectedModel.path}`,
-	(gltf) => {
-		// Add every element one by one
-		// const children = [...gltf.scene.children];
-		// for (const child of children) {
-		// 	scene.add(child);
-		// }
+function loadModel(modelPath) {
+	gltfLoader.load(
+		`${basePath}${modelPath}`,
+		(gltf) => {
+			// Add every element one by one
+			// const children = [...gltf.scene.children];
+			// for (const child of children) {
+			// 	scene.add(child);
+			// }
 
-		// Or load the whole scene
-		scene.add(gltf.scene);
-		gltf.scene.scale.setScalar(debugObject.selectedModel.scale);
-		gltf.scene.position.set(
-			0,
-			debugObject.selectedModel.verticalPosition || 0,
-			0
-		);
+			// Or load the whole scene
+			scene.add(gltf.scene);
 
-		gltf.scene.traverse((child) => {
-			if (child.isMesh) {
-				child.castShadow = true;
-				child.receiveShadow = true;
+			// Set the camera position if defined in the debugObject
+			if (debugObject.selectedModel.cameraPosition) {
+				camera.position.set(
+					debugObject.selectedModel.cameraPosition.x || 4,
+					debugObject.selectedModel.cameraPosition.y || 5,
+					debugObject.selectedModel.cameraPosition.z || 4
+				);
 			}
-		});
+			// Set the camera target to the center of the model
+			controls.target.set(0, 0.75, 0);
 
-		if (gltf.animations && gltf.animations.length) {
-			mixer = new THREE.AnimationMixer(gltf.scene);
-			const action = mixer.clipAction(
-				gltf.animations.find(
-					(animation) => animation.name === debugObject.selectedAnimation
-				)
+			// Set the model name, useful for removing it later
+			gltf.scene.name = "currentModel";
+			gltf.scene.scale.setScalar(debugObject.selectedModel.scale);
+			gltf.scene.position.set(
+				0,
+				debugObject.selectedModel.verticalPosition || 0,
+				0
 			);
-			action.play();
+
+			// On traverse tous les enfants (meshes) du modèle pour activer les ombres
+			gltf.scene.traverse((child) => {
+				if (child.isMesh) {
+					child.castShadow = true;
+					child.receiveShadow = true;
+				}
+			});
+
+			// Si le modèle a une animation, on crée un AnimationMixer
+			if (gltf.animations && gltf.animations.length > 0) {
+				mixer = new THREE.AnimationMixer(gltf.scene);
+				const numberOfAnimations = gltf.animations.length;
+				// Jouer la dernière animation
+				const action = mixer.clipAction(
+					gltf.animations[numberOfAnimations - 1]
+				);
+				action.play();
+			}
+		},
+		() => {
+			// console.log("Model is loading...");
+		},
+		(error) => {
+			console.error("An error occurred while loading the model:", error);
 		}
-
-		console.log("Model loaded successfully");
-		console.log(gltf);
-	},
-	() => {
-		// This is the progress callback
-
-		console.log("Model is loading...");
-	},
-	(error) => {
-		// This is the error callback
-		console.error("An error occurred while loading the model:", error);
-	}
-);
+	);
+}
+loadModel(debugObject.selectedModel.path);
 
 /**
  * Floor
@@ -156,7 +230,7 @@ scene.add(floor);
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.set(1024, 1024);
 directionalLight.shadow.camera.far = 15;
@@ -164,7 +238,7 @@ directionalLight.shadow.camera.left = -7;
 directionalLight.shadow.camera.top = 7;
 directionalLight.shadow.camera.right = 7;
 directionalLight.shadow.camera.bottom = -7;
-directionalLight.position.set(5, 5, 5);
+directionalLight.position.set(4, 5, 4);
 scene.add(directionalLight);
 
 /**
